@@ -371,6 +371,10 @@ public class ProxyService {
     protected void handleProxyRequest(HttpRequest request, OutputStream os, String method) {
         logger.log(FINE, "handleProxyRequest for {0}", request.getUrl());
         URL url = request.getUrl();
+        if (url == null) {
+            logger.log(SEVERE, "request.getUrl() is null: ");
+            return;
+        }
         Socket socket = null;
         InputStream remoteInputStream = null;
         OutputStream remoteOutputStream = null;
