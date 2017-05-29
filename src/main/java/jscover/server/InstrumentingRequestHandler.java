@@ -451,6 +451,7 @@ public class InstrumentingRequestHandler extends HttpServer {
     @Override
     protected void handleGet(HttpRequest request) throws IOException {
         String uri = request.getPath();
+        String url = request.getUrl() != null ? request.getUrl().toString() : "http://dummy.example.com/this/is/dummy/url";
         try {
             if (uri.equals("/jscoverage.js")) {
                 sendResponse(HTTP_STATUS.HTTP_OK, request.getMime(), ioService.generateJSCoverageServerJS());
@@ -460,6 +461,17 @@ public class InstrumentingRequestHandler extends HttpServer {
             } else if (uri.startsWith("/jscoverage")) {
                 sendResponse(HTTP_STATUS.HTTP_OK, request.getMime(), ioService.getResourceAsStream(uri));
             } else if ((uri.endsWith(".js") || configuration.isInstrumentReg()) && !configuration.skipInstrumentation(uri.substring(1)) && !request.skipInstrumentation()) {
+                String jsInstrumented;
+                if (configuration.isProxy()) {
+                    String originalJS = proxyService.getUrl(request);
+                    jsInstrumented = instrumenterService.instrumentJSForProxyServer(configuration, originalJS, uri);
+                    uris.put(uriFileTranslator.convertUriToFile(uri).substring(1), originalJS);
+                } else {
+                    jsInstrumented = instrumenterService.instrumentJSForWebServer(configuration, new File(wwwRoot, uri), uri);
+                    uris.put(uri.substring(1), null);
+                }
+                sendResponse(HTTP_STATUS.HTTP_OK, MIME.JS, jsInstrumented);
+            } else if ((url.endsWith(".js") || configuration.isInstrumentReg()) && !configuration.skipInstrumentation(url.substring(1)) && !request.skipInstrumentation()) {
                 String jsInstrumented;
                 if (configuration.isProxy()) {
                     String originalJS = proxyService.getUrl(request);
