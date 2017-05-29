@@ -372,7 +372,7 @@ public class ProxyService {
         logger.log(FINE, "handleProxyRequest for {0}", request.getUrl());
         URL url = request.getUrl();
         if (url == null) {
-            logger.log(SEVERE, "request.getUrl() is null: ");
+            logger.log(SEVERE, "request.getUrl() is null: " + request.getPath());
             return;
         }
         Socket socket = null;

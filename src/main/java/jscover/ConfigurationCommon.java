@@ -514,6 +514,10 @@ public class ConfigurationCommon extends Configuration {
         }
     }
 
+    public boolean isInstrumentReg() {
+        return 0 < patternMatchers.size() ? true : false;
+    }
+
     protected boolean parseArg(String arg) {
         if (arg.equals(HELP_PREFIX1) || arg.equals(HELP_PREFIX2)) {
             showHelp = true;

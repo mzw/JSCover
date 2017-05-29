@@ -459,7 +459,7 @@ public class InstrumentingRequestHandler extends HttpServer {
                 sendResponse(HTTP_STATUS.HTTP_OK, request.getMime(), reportHTML);
             } else if (uri.startsWith("/jscoverage")) {
                 sendResponse(HTTP_STATUS.HTTP_OK, request.getMime(), ioService.getResourceAsStream(uri));
-            } else if (uri.endsWith(".js") && !configuration.skipInstrumentation(uri.substring(1)) && !request.skipInstrumentation()) {
+            } else if ((uri.endsWith(".js") || configuration.isInstrumentReg()) && !configuration.skipInstrumentation(uri.substring(1)) && !request.skipInstrumentation()) {
                 String jsInstrumented;
                 if (configuration.isProxy()) {
                     String originalJS = proxyService.getUrl(request);
